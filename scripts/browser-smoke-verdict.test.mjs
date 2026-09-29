@@ -232,7 +232,8 @@ test("empty or null baseline diverges for every viewport", () => {
 });
 
 test("degenerate current verdict fails closed", () => {
-  const { divergesFromBaseline, reasons } = compareToBaseline(current, verdict());
+  for (const current of [null, undefined, {}, { viewports: {} }]) {
+    const { divergesFromBaseline, reasons } = compareToBaseline(current, verdict());
     assert.equal(divergesFromBaseline, true);
     assert.deepEqual(reasons, ["current verdict has no viewport data"]);
   }
