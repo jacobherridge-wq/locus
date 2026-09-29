@@ -17,7 +17,7 @@ const rejects = () => Promise.reject(new Error("network down"));
 /**
  * Drain pending microtasks without advancing mocked time, so "has it finished
  * yet?" is answered by the mocked clock rather than by wall-clock luck.
- * `setImmediate` stays real \u2014 only `setTimeout` is mocked.
+ * `setImmediate` stays real — only `setTimeout` is mocked.
  */
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 
@@ -56,7 +56,7 @@ const preview = (overrides = {}) => harness({ livePreview: true, ...overrides })
 /** Deployed: only the server can clear the `__Host-` cookie. */
 const deployed = (overrides = {}) => harness({ livePreview: false, ...overrides });
 
-// \u2500\u2500 Live preview \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ── Live preview ───────────────────────────────────────────────────────────────
 
 test("preview: a successful sign-out clears the token, then redirects", async () => {
   const h = preview();
@@ -88,7 +88,7 @@ test("preview: a sign-out that never settles clears and redirects once the wait 
 
   t.mock.timers.tick(TEST_TIMEOUT_MS - 1);
   await flush();
-  assert.deepEqual(h.order, [], "the server still has its window \u2014 do not give up early");
+  assert.deepEqual(h.order, [], "the server still has its window — do not give up early");
 
   t.mock.timers.tick(1);
   await done;
@@ -108,7 +108,7 @@ test("preview: a stored bearer is still invalidated server-side", async () => {
   assert.equal(h.requests, 1);
 });
 
-// \u2500\u2500 Deployed \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ── Deployed ─────────────────────────────────────────────────────────────────────
 // JS cannot delete the HttpOnly `__Host-` cookie and `cookieCache` keeps
 // serving the cached session, so an unconfirmed sign-out must NOT look like one.
 
@@ -135,7 +135,7 @@ test("deployed: the timeout is distinguishable from a rejection", async () => {
   await assert.rejects(deployed({ requestSignOut: rejects }).run(), /Sign-out failed/);
 });
 
-// \u2500\u2500 Bounded wait (also used by `signIn`'s pre-sign-in session clear) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ── Bounded wait (also used by `signIn`'s pre-sign-in session clear) ──────────
 
 test("settleWithin reports the outcome and never rejects", async () => {
   assert.equal(await settleWithin(() => Promise.resolve(), TEST_TIMEOUT_MS), "ok");
@@ -157,7 +157,7 @@ test("settleWithin waits its full window, then gives up rather than hanging", as
   assert.equal(outcome, "timeout", "the caller is never left waiting on a wedged request");
 });
 
-// \u2500\u2500 Pre-sign-in session clear (`signIn`) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ── Pre-sign-in session clear (`signIn`) ─────────────────────────────────────
 // Same per-environment bound as sign-out, but best effort: it also runs when
 // there is no prior session, so a failure must never block sign-in.
 
@@ -201,7 +201,7 @@ test("pre-sign-in: a deployed session gets the deployed window, not the preview 
   assert.equal(
     h.cleared,
     0,
-    "only the server can end a deployed session \u2014 do not start OAuth while it is still live",
+    "only the server can end a deployed session — do not start OAuth while it is still live",
   );
 
   t.mock.timers.tick(DEPLOYED_SIGN_OUT_TIMEOUT_MS - PREVIEW_SIGN_OUT_TIMEOUT_MS);
