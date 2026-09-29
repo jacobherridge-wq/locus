@@ -1,8 +1,8 @@
 /**
  * Client-readable marker for gate-materialized sessions ("Sign in with Grok"
  * zero-click sessions minted by `gate-session.server.ts`). Signing out of a
- * gate session is a no-op \u2014 the next request re-materializes it from
- * `x-grok-identity` \u2014 so `UserButton` uses this to hide its sign-out control.
+ * gate session is a no-op — the next request re-materializes it from
+ * `x-grok-identity` — so `UserButton` uses this to hide its sign-out control.
  * `__Host-` prefixed like the other auth cookies: browsers reject a `__Host-`
  * cookie carrying a `Domain`, so an untrusted sibling `*.grok.me` app cannot
  * plant a parent-domain copy that the host-only clear could never expire.
