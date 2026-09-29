@@ -75,7 +75,7 @@ function toSql(run: Run): Sql {
     strings: TemplateStringsArray,
     ...values: unknown[]
   ): Promise<T[]> => {
-    // Rebuild with $1, $2, \u2026 placeholders so values stay parameterized.
+    // Rebuild with $1, $2, … placeholders so values stay parameterized.
     let text = strings[0];
     for (let i = 0; i < values.length; i += 1) text += `$${i + 1}${strings[i + 1]}`;
     return run<T>(text, values);
@@ -172,7 +172,7 @@ let sqlPromise: Promise<Sql> | null = null;
 async function createSql(): Promise<Sql> {
   if (typeof window !== "undefined") {
     throw new Error(
-      "@/lib/db is server-only \u2014 call getSql() from a createServerFn handler " +
+      "@/lib/db is server-only — call getSql() from a createServerFn handler " +
         "or a server route loader, never from client code.",
     );
   }
@@ -181,14 +181,14 @@ async function createSql(): Promise<Sql> {
 
 /**
  * Get the shared, **server-only** SQL client. Neon when `DATABASE_URL` is set,
- * otherwise the local PGLite fallback. Memoized \u2014 safe to call per request.
+ * otherwise the local PGLite fallback. Memoized — safe to call per request.
  *
  * Schema comes from `migrations/*.sql`, auto-applied before the first query on
- * both backends \u2014 define tables there, never inline in server functions.
+ * both backends — define tables there, never inline in server functions.
  */
 export function getSql(): Promise<Sql> {
   sqlPromise ??= createSql().catch((err) => {
-    sqlPromise = null; // don't memoize failures \u2014 let the next call retry
+    sqlPromise = null; // don't memoize failures — let the next call retry
     throw err;
   });
   return sqlPromise;
@@ -213,7 +213,7 @@ export async function getPglite(): Promise<import("@electric-sql/pglite").PGlite
  * Finish DB bootstrap before the server handles traffic.
  *
  * - **PGLite** (preview / no `DATABASE_URL`): open the in-memory DB and apply
- *   `migrations/*.sql`. Idempotent \u2014 concurrent callers share one promise.
+ *   `migrations/*.sql`. Idempotent — concurrent callers share one promise.
  * - **Neon**: no-op (pool is created lazily on first query).
  *
  * Vite `configureServer` awaits this at dev startup; production imports of this
