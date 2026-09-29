@@ -102,17 +102,17 @@ test("canvas app with no card warns 'missing' and missing og:type", () => {
   const root = makeWorkspace({ siteJson: UTILITY_SITE });
   const warnings = computeBrandWarnings({ hasCanvas: true, workspaceRoot: root });
   assert.equal(warnings.length, 2);
-  assert.match(warnings[0], /og\\.jpg.*is missing/s);
+  assert.match(warnings[0], /og\.jpg.*is missing/s);
   assert.match(warnings[0], /not done/);
-  assert.match(warnings[1], /site\\.json/);
+  assert.match(warnings[1], /site\.json/);
   assert.match(warnings[1], /og:type|x:game/);
 });
 
 test("canvas card without type still warns for og:type", () => {
   const root = makeWorkspace({ siteJson: UTILITY_CUSTOM_SITE, cardFile: "og.jpg" });
   const warnings = computeBrandWarnings({ hasCanvas: true, workspaceRoot: root });
-  assert.match(warnings.join("\\n"), /x:game/);
-  assert.match(warnings.join("\\n"), /x-banner\\.jpg/);
+  assert.match(warnings.join("\n"), /x:game/);
+  assert.match(warnings.join("\n"), /x-banner\.jpg/);
 });
 
 test("oversized card warns on the scraper budget (jpg and legacy png)", () => {
@@ -162,7 +162,7 @@ test("oversized x-banner warns on the same scraper budget as og.jpg", () => {
   });
   const warnings = computeBrandWarnings({ hasCanvas: true, workspaceRoot: root });
   assert.equal(warnings.length, 1);
-  assert.match(warnings[0], /x-banner\\.jpg is over 600 KB/);
+  assert.match(warnings[0], /x-banner\.jpg is over 600 KB/);
 });
 
 test("legacy png + site.json type still needs the X feed card", () => {
@@ -171,7 +171,7 @@ test("legacy png + site.json type still needs the X feed card", () => {
     cardFile: "og.png",
   });
   const warnings = computeBrandWarnings({ hasCanvas: true, workspaceRoot: root });
-  assert.match(warnings.join("\\n"), /x-banner\\.jpg/);
+  assert.match(warnings.join("\n"), /x-banner\.jpg/);
 });
 
 test("siteDeclaresOgTypeGame reads the site contract", () => {
@@ -276,7 +276,7 @@ test("cli: a non-game with no card fails too — the pass exists to produce one"
   const result = JSON.parse(run.stdout);
   assert.equal(result.ok, false);
   assert.equal(result.warnings, 1);
-  assert.match(result.messages[0], /^BRAND WARNING: .*og\\.jpg is missing and this pass exists/);
+  assert.match(result.messages[0], /^BRAND WARNING: .*og\.jpg is missing and this pass exists/);
   // The parent's gate keeps tolerating the placeholder for a plain utility.
   assert.match(computeBrandWarnings({ hasCanvas: false, workspaceRoot: root })[0], /^BRAND NOTE:/);
 });
@@ -307,7 +307,7 @@ const readDoc = (rel) => readFileSync(join(TEMPLATE_ROOT, rel), "utf8");
 
 test("SKILL.md and AGENTS.md name the marker path and bound this script uses", () => {
   // Prose wraps, so the minute count may straddle a line break.
-  const bound = new RegExp(`${OG_PENDING_MAX_AGE_MS / 60_000}\\\\s+minutes`);
+  const bound = new RegExp(`${OG_PENDING_MAX_AGE_MS / 60_000}\\s+minutes`);
   for (const rel of [".grok/skills/og/SKILL.md", "AGENTS.md"]) {
     const doc = readDoc(rel);
     assert.ok(doc.includes(`/workspace/${OG_PENDING_REL_PATH}`), `${rel}: marker path`);
@@ -321,34 +321,34 @@ test("SKILL.md and AGENTS.md name the marker path and bound this script uses", (
 const PROHIBITION_SECTIONS = [
   {
     rel: ".grok/skills/og/SKILL.md",
-    label: '\u00a7 "Brand-asset pass"',
+    label: '§ "Brand-asset pass"',
     from: "## Brand-asset pass:",
-    until: /\\n## /,
+    until: /\n## /,
   },
   {
     rel: "AGENTS.md",
     label: "execution loop step 6",
     from: "6. **Brand-asset pass",
-    until: /\\n7\\. /,
+    until: /\n7\. /,
   },
 ];
 
 function prohibitionSection({ rel, label, from, until }) {
   const doc = readDoc(rel);
   const start = doc.indexOf(from);
-  assert.notEqual(start, -1, `${rel}: ${label} moved \u2014 no "${from.trim()}"`);
+  assert.notEqual(start, -1, `${rel}: ${label} moved — no "${from.trim()}"`);
   const rest = doc.slice(start + from.length);
   const end = rest.search(until);
   // Markdown emphasis and prose wrapping both sit between the two words.
-  return (from + (end === -1 ? rest : rest.slice(0, end))).replace(/[`*]/g, "").replace(/\\s+/g, " ");
+  return (from + (end === -1 ? rest : rest.slice(0, end))).replace(/[`*]/g, "").replace(/\s+/g, " ");
 }
 
 test("the sections that own the brand-task prohibition never affirm a wait", () => {
   // Pinned on the shape of the prohibition, not on a negation being somewhere
   // nearby: "So: wait_tasks before the final verify, but never get_task_output"
   // keeps a negation in the sentence while instructing exactly the wait.
-  const connectors = /(?:\\s|[/,;]|\\band\\b|\\bor\\b|\\bwait_tasks\\b|\\bget_task_output\\b)+$/i;
-  const negation = /\\b(?:no|never|not|don['\u2019]t)$/i;
+  const connectors = /(?:\s|[/,;]|\band\b|\bor\b|\bwait_tasks\b|\bget_task_output\b)+$/i;
+  const negation = /\b(?:no|never|not|don['’]t)$/i;
   for (const section of PROHIBITION_SECTIONS) {
     const where = `${section.rel} ${section.label}`;
     const prose = prohibitionSection(section);
@@ -357,17 +357,17 @@ test("the sections that own the brand-task prohibition never affirm a wait", () 
     for (const match of mentions) {
       const before = prose.slice(0, match.index).replace(connectors, "");
       const context = prose.slice(Math.max(0, match.index - 60), match.index + 20);
-      assert.ok(negation.test(before), `${where}: not a prohibition: \u2026${context}\u2026`);
+      assert.ok(negation.test(before), `${where}: not a prohibition: …${context}…`);
     }
   }
 });
 
 test("SKILL.md tells the pass to self-check with the flag this CLI accepts", () => {
   const skill = readDoc(".grok/skills/og/SKILL.md");
-  const invocations = skill.match(/node scripts\\/brand-check\\.mjs[^\\n`]*/g) ?? [];
+  const invocations = skill.match(/node scripts\/brand-check\.mjs[^\n`]*/g) ?? [];
   assert.ok(invocations.length > 0);
   for (const line of invocations) {
-    const argv = line.replace("node scripts/brand-check.mjs", "").trim().split(/\\s+/);
+    const argv = line.replace("node scripts/brand-check.mjs", "").trim().split(/\s+/);
     assert.equal(parseBrandCheckArgs(argv.filter(Boolean)).error, undefined, line);
   }
 });
