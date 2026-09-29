@@ -84,7 +84,7 @@ test("parseListenerInodes reads the tcp6 dump the same way", () => {
 });
 
 // /proc/<pid>/cmdline is NUL-separated.
-const cmdline = (...argv) => argv.join("\u0000");
+const cmdline = (...argv) => argv.join("\\u0000");
 
 test("looksLikePreviewProcess matches the npm wrapper and its vite child", () => {
   const npmRun = cmdline("node", "/usr/lib/node_modules/npm/bin/npm-cli.js", "run", "preview");
@@ -183,7 +183,7 @@ test("stopOutcome reports a verified free port", () => {
     after: { pids: [] },
   });
   assert.equal(stopped.ok, true);
-  assert.match(stopped.message, /stopped pid\(s\) 50 \u2014 port 8081 is free/);
+  assert.match(stopped.message, /stopped pid\(s\) 50 — port 8081 is free/);
 
   const idle = stopOutcome({ signalled: [], stubborn: [], after: { pids: [] } });
   assert.equal(idle.ok, true);
