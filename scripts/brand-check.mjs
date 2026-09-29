@@ -2,7 +2,7 @@
 /**
  * Brand-asset gate shared by browser-smoke.mjs (and unit-testable without a
  * browser): a canvas app is almost always a game / visually rich app, and
- * those must ship a custom share card \u2014 the default og.grok.me placeholder is
+ * those must ship a custom share card — the default og.grok.me placeholder is
  * not acceptable for them (see .grok/skills/og/SKILL.md).
  *
  * Games must also set type=x:game in src/lib/og/site.json so the platform
@@ -23,9 +23,9 @@
  * og-pending marker; the marker only silences what the parent's gates see. It
  * also requires the custom card: its caller is normally the pass that exists to
  * produce one, so the placeholder the parent tolerates for a plain utility is a
- * failed pass here. --placeholder-ok is for the other launch \u2014 a pass doing
+ * failed pass here. --placeholder-ok is for the other launch — a pass doing
  * favicon, PWA icons and title for a plain utility that keeps the og.grok.me
- * card \u2014 where no card is the expected verdict rather than a failure.
+ * card — where no card is the expected verdict rather than a failure.
  */
 import { existsSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -61,7 +61,7 @@ export function ogPendingActive(workspaceRoot, now = Date.now()) {
  * gate runs, and "missing" would send the agent to redo the task's work.
  *
  * In flight is silence, not a note: callers report this array as warnings, so
- * anything left in it \u2014 however it is worded \u2014 reaches the agent as one.
+ * anything left in it — however it is worded — reaches the agent as one.
  */
 export function computeBrandWarnings({
   hasCanvas,
@@ -73,7 +73,7 @@ export function computeBrandWarnings({
 }
 
 /**
- * The files on disk, marker ignored \u2014 the brand pass's own view of its work.
+ * The files on disk, marker ignored — the brand pass's own view of its work.
  * Deliberately not exported: a gate that reached for this instead of
  * `computeBrandWarnings` would warn about a card that is still generating.
  * `cardRequired` is for a caller that is itself the brand pass: for it the
@@ -97,7 +97,7 @@ function brandWarningsOnDisk({
   if (cardPath !== undefined) {
     if (statSync(cardPath).size > MAX_CARD_BYTES) {
       warnings.push(
-        `BRAND WARNING: ${cardPath} is over 600 KB \u2014 link scrapers (X card previews included) `
+        `BRAND WARNING: ${cardPath} is over 600 KB — link scrapers (X card previews included) `
           + "time out or skip images this heavy, so the card silently fails to unfurl. "
           + `Re-encode as JPEG (public/og.jpg, ffmpeg -q:v 4) per ${skillPath}.`,
       );
@@ -113,7 +113,7 @@ function brandWarningsOnDisk({
     warnings.push(
       `BRAND WARNING: this looks like a game/canvas app but ${workspaceRoot}/public/og.jpg `
         + "is missing. Games and visually rich apps must ship a custom 1200x630 share card "
-        + "built from the app's own art \u2014 the default og.grok.me placeholder card is not "
+        + "built from the app's own art — the default og.grok.me placeholder card is not "
         + `acceptable for them. You are not done: open ${skillPath} and finish the `
         + "brand-asset pass.",
     );
@@ -122,14 +122,14 @@ function brandWarningsOnDisk({
       `BRAND WARNING: ${workspaceRoot}/public/og.jpg is missing and this pass exists to `
         + "produce it. Generate the 1200x630 card from the app's own art and hand it over "
         + `per ${skillPath}. If no image-generation tool is available in this session, `
-        + "report that instead of reporting a pass \u2014 the app keeps the og.grok.me "
+        + "report that instead of reporting a pass — the app keeps the og.grok.me "
         + "placeholder.",
     );
   } else {
     warnings.push(
-      "BRAND NOTE: no custom public/og.jpg \u2014 the platform will serve the og.grok.me placeholder. "
+      "BRAND NOTE: no custom public/og.jpg — the platform will serve the og.grok.me placeholder. "
         + "Custom cards are the default for games of every kind (DOM board/word games included), "
-        + "whimsical apps, creative tools, and brand-forward pages \u2014 only plain utilities "
+        + "whimsical apps, creative tools, and brand-forward pages — only plain utilities "
         + "(converters, CRUD trackers, admin dashboards) keep the placeholder. If this app "
         + `is not a plain utility, finish the brand-asset pass per ${skillPath}.`,
     );
@@ -138,25 +138,25 @@ function brandWarningsOnDisk({
   if (hasCanvas && !siteDeclaresOgTypeGame(site)) {
     warnings.push(
       'BRAND WARNING: this looks like a game/canvas app but src/lib/og/site.json is missing '
-        + '"type": "x:game". X uses og:type=x:game to present the unfurl as a game card \u2014 set '
+        + '"type": "x:game". X uses og:type=x:game to present the unfurl as a game card — set '
         + `it in ${sitePath} per ${skillPath}. Do not invent `
         + "x:type or overload twitter:card as the game signal.",
     );
   }
 
   // Games with a custom link card must also ship the 50:11 X feed card.
-  // Skip while still on the og.grok.me placeholder \u2014 that pass has not started yet.
+  // Skip while still on the og.grok.me placeholder — that pass has not started yet.
   if (hasCanvas && cardPath !== undefined) {
     const bannerPath = join(workspaceRoot, "public/x-banner.jpg");
     if (!existsSync(bannerPath)) {
       warnings.push(
         `BRAND WARNING: this looks like a game/canvas app but ${bannerPath} is missing. `
-          + "Games need a 50:11 X feed card (1200\u00d7264 JPEG) at public/x-banner.jpg \u2014 "
+          + "Games need a 50:11 X feed card (1200×264 JPEG) at public/x-banner.jpg — "
           + `open ${skillPath} and finish the brand-asset pass.`,
       );
     } else if (statSync(bannerPath).size > MAX_CARD_BYTES) {
       warnings.push(
-        `BRAND WARNING: ${bannerPath} is over 600 KB \u2014 link scrapers (X card previews `
+        `BRAND WARNING: ${bannerPath} is over 600 KB — link scrapers (X card previews `
           + "included) time out or skip images this heavy, so the feed card silently fails "
           + `to unfurl. Re-encode as JPEG (ffmpeg -q:v 4) per ${skillPath}.`,
       );
@@ -181,9 +181,9 @@ export function parseBrandCheckArgs(argv) {
       placeholderOk = true;
     } else if (argv[i] === "--root") {
       root = argv[++i];
-      if (root === undefined) return { error: `--root needs a directory \u2014 ${usage}` };
+      if (root === undefined) return { error: `--root needs a directory — ${usage}` };
     } else {
-      return { error: `unexpected argument: ${argv[i]} \u2014 ${usage}` };
+      return { error: `unexpected argument: ${argv[i]} — ${usage}` };
     }
   }
   return { game, placeholderOk, root };
@@ -202,7 +202,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const workspaceRoot = args.root ?? join(dirname(fileURLToPath(import.meta.url)), "..");
   // The caller here is the brand task checking its own work: it is holding the
   // marker (report it, but judge the assets on disk) and it owes a custom card
-  // whether or not the app draws to a canvas \u2014 unless it was launched for a
+  // whether or not the app draws to a canvas — unless it was launched for a
   // plain utility that keeps the placeholder, which only it knows.
   const messages = brandWarningsOnDisk({
     hasCanvas: args.game,
