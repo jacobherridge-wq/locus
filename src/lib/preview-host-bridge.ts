@@ -1,5 +1,5 @@
 /**
- * Guest side of the grok-web \u2194 sandbox preview postMessage bridge.
+ * Guest side of the grok-web ↔ sandbox preview postMessage bridge.
  *
  * Activates only when this page is framed by an allowlisted Grok embedder.
  * Top-level runs (download/export, local `npm run dev`, deployed sites) noop.
@@ -81,7 +81,7 @@ export function resolveCurrentEmbedderOrigin(): string | null {
 }
 
 /**
- * Install host\u2194guest messaging. Returns a dispose function.
+ * Install host↔guest messaging. Returns a dispose function.
  * Noops (returns a no-op dispose) when not embedded under a Grok parent.
  */
 export function installPreviewHostBridge(
@@ -198,7 +198,7 @@ export function installPreviewHostBridge(
   const onHistory = (data: unknown) => {
     const parsed = HistorySchema.safeParse(data);
     if (!parsed.success) return;
-    // Do not history.go(-1) off the first entry \u2014 that leaves the preview.
+    // Do not history.go(-1) off the first entry — that leaves the preview.
     if (parsed.data.delta === -1 && isAtHistoryRoot()) return;
     // Location sync comes from the popstate listener once history settles.
     window.history.go(parsed.data.delta);
